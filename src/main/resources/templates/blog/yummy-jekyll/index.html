@@ -127,8 +127,97 @@
                 </div>
             </div>
         </div>
+        <input type="hidden" name="ip" th:value="${ip}" />
     </section>
 </div>
+<div id="allmap"></div>
 </body>
 <div th:replace="blog/yummy-jekyll/footer::footer"></div>
+<script th:src="@{/admin/plugins/sweetalert/sweetalert.min.js}"></script>
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=HkIQdbVSZHOrlUQORMtWOA1zpy2Wx0hG"></script>
+
+<script>
+
+    $(function () {
+
+        var map = new BMap.Map("allmap");
+        var point = new BMap.Point(116.331398,39.897445);
+        map.centerAndZoom(point,12);
+
+        var geolocation = new BMap.Geolocation();
+        geolocation.getCurrentPosition(function(r){
+            console.log(r);
+            if(this.getStatus() == BMAP_STATUS_SUCCESS){
+
+                var mk = new BMap.Marker(r.point);
+                map.addOverlay(mk);
+                map.panTo(r.point);
+                // alert('您的位置：'+r.point.lng+','+r.point.lat);
+
+                var local = r.address.province + r.address.city + r.address.district + r.address.street + r.address.street_number;
+                console.log(local);
+
+                $.ajax({
+                    type: 'POST',//方法类型
+                    url: "/position",
+                    data: {local:local,ip:$("input[name='ip']").val()},
+                    success: function (result) {
+                        console.log(result);
+                        if (result.resultCode == 200) {
+                            $('#articleModal').modal('hide');
+                            swal({
+                                title: result.message,
+                                type: 'success',
+                                showCancelButton: false,
+                                confirmButtonColor: '#3085d6',
+                                confirmButtonText: '返回博客列表',
+                                confirmButtonClass: 'btn btn-success',
+                                buttonsStyling: false
+                            }).then(function () {
+                                // window.location.href = "/admin/blogs";
+                            })
+                        }
+                        else {
+                            $('#articleModal').modal('hide');
+                            swal(result.message, {
+                                icon: "error",
+                            });
+                        }
+                        ;
+                    },
+                    error: function () {
+                        swal("操作失败", {
+                            icon: "error",
+                        });
+                    }
+                });
+
+
+            }
+            else {
+                alert('failed'+this.getStatus());
+            }
+        });
+    })
+
+
+    function showLocationInfo(pt, rs){
+        var opts = {
+            width : 250,     //信息窗口宽度
+            height: 100,     //信息窗口高度
+            title : ""  //信息窗口标题
+        }
+
+        var addComp = rs.addressComponents;
+        var addr = "当前位置：" + addComp.province + ", " + addComp.city + ", " + addComp.district + ", " + addComp.street + ", " + addComp.streetNumber + "<br/>";
+        addr += "纬度: " + pt.lat + ", " + "经度：" + pt.lng;
+        //alert(addr);
+
+        //var infoWindow = new BMap.InfoWindow(addr, opts);  //创建信息窗口对象
+        //marker.openInfoWindow(infoWindow);
+        alert(addr);
+    }
+
+
+</script>
 </html>

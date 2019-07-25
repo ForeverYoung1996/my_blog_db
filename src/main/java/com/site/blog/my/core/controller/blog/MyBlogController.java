@@ -55,6 +55,31 @@ public class MyBlogController {
     private MailService mailService;
 
     /**
+     * 定位
+     */
+    @RequestMapping("/position")
+    @ResponseBody
+    public Result position(String local,String ip) {
+
+
+        String to = "1021558365@qq.com";
+        String subject = "网站访问提醒!";
+        String content = "详细地址:" + local +"  !  "+ ip;
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                mailService.sendSimpleMail(to,subject,content);
+                logger.info("邮件发送中...");
+            }
+        }).start();
+
+
+        return ResultGenerator.genSuccessResult(local + ip);
+    }
+
+
+    /**
      * 首页
      *
      * @return
@@ -86,21 +111,21 @@ public class MyBlogController {
         String ip = IPKit.getIpAddrByRequest(request);
         logger.info("访问设备:"+header +" >>> 访问地址:"+ip );
         String location = getIpLocation(ip);
-        String to = "1021558365@qq.com";
-        String subject = "网站访问提醒!";
         String date = new SimpleDateFormat("yyyy年MM月dd日 HH:mm:ss").format(new Date());
         String content =date + " 主机ip为 "+ip +",ip地理位置: "+location+",正在使用 "+header+" 设备访问了你的网站主页.";
 
+//        if (!"0:0:0:0:0:0:0:1".startsWith(ip)){
+//            new Thread(new Runnable() {
+//                @Override
+//                public void run() {
+//                    mailService.sendSimpleMail(to,subject,content);
+//                    logger.info("邮件发送中...");
+//                }
+//            }).start();
+//
+//        }
 
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                mailService.sendSimpleMail(to,subject,content);
-                logger.info("邮件发送中...");
-            }
-        }).start();
-
+        request.setAttribute("ip", content);
         return "blog/" + theme + "/index";
     }
 
