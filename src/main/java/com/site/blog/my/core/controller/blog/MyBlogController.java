@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.Date;
@@ -174,14 +175,53 @@ public class MyBlogController {
 
         String s = null;
         try {
-            s = HttpUtils.get(url);
-
-        System.out.println(s);
-            String url1 = "http://api.map.baidu.com/geocoder/v2/?output=json&ak="+BAIDU_APP_KEY+"&location=" +"3747938.29,13222458.63" + "&output=json";
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    for (int i = 0 ; i < 100 ; i ++){
+                        try {
+                            HttpUtils.get("https://www.yilukkk.com/index");
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }).start();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    for (int i = 0 ; i < 100 ; i ++){
+                        try {
+                            HttpUtils.get("https://www.yilukkk.com/index");
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }).start();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    for (int i = 0 ; i < 100 ; i ++){
+                        try {
+                            HttpUtils.get("https://www.yilukkk.com/index");
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }).start();
+            System.out.println("=========请求结束========");
+//            s = URLDecoder.decode(s,"utf-8");
+//            JSONObject jsonObject = JSONObject.parseObject(s);
+//            String s2 = jsonObject.get("address").toString();
+//            System.out.println(URLDecoder.decode(s2,"utf-8"));
+//            System.out.println(s);
+//            String url1 = "http://api.map.baidu.com/geocoder/v2/?output=json&ak="+BAIDU_APP_KEY+"&location=" +"3747938.29,13222458.63" + "&output=json";
 
 //        String url1 = "http://api.map.baidu.com/geocoder/v2/?ak="+BAIDU_APP_KEY+"&callback=renderReverse&location="+"3747938.29,13222458.63"+"&output=json&pois=1";
-            String s1 = HttpUtils.post(url1,null);
-            System.out.println(s1);
+//            String s1 = HttpUtils.post(url1,null);
+//            System.out.println(s1);
 
         } catch (Exception e) {
             e.printStackTrace();
